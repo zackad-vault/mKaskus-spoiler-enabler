@@ -7,7 +7,7 @@
 // @include        http://m.kaskus.co.id/post/*
 // @include        http://m.kaskus.co.id/thread/*
 // @include        http://m.kaskus.co.id/lastpost/*
-// @license        GNU GPL v2.0
+// @license        MIT License
 // @grant          GM_addStyle
 // @require        http://code.jquery.com/jquery-1.10.1.min.js
 // @run-at         document-end
