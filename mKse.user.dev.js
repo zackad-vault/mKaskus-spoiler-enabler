@@ -5,7 +5,7 @@
 // @author         zackad
 // @version        0.1
 // @include        http://m.kaskus.co.id/*
-// @license        GNU (GPL)
+// @license        MIT License
 // @grant          GM_addStyle
 // @require        http://code.jquery.com/jquery-1.10.1.min.js
 // @run-at         document-end
@@ -31,3 +31,4 @@ $(document).ready(function(){
         $('.show-spoiler').show();
     });
 });
+            
