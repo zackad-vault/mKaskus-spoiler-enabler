@@ -4,18 +4,23 @@
 // @homepageURL    http://www.kaskus.co.id/profile/4125324
 // @description    Spoiler di m.kaskus layaknya versi desktop
 // @author         zackad
-// @version        0.3
+// @version        0.3.1
 // @include        http://m.kaskus.co.id/post/*
 // @include        http://m.kaskus.co.id/thread/*
 // @include        http://m.kaskus.co.id/lastpost/*
+// @include        /^https?://www.kaskus.co.id/thread/*/
+// @include        /^https?://www.kaskus.co.id/lastpost/*/
+// @include        /^https?://www.kaskus.co.id/post/*/
+// @include        /^https?://www.kaskus.co.id/group/discussion/*/
+// @include        /^https?://www.kaskus.co.id/show_post/*/
 // @license        MIT License
-// @grant          GM_addStyle
 // @require        http://code.jquery.com/jquery-1.10.1.min.js
 // @run-at         document-end
 // ==/UserScript==
 $(document).ready(function(){
     $('span[style*="font-size:10px;color: #888;"]').hide();
     
+    if (window.location.href.indexOf("m.kaskus.co.id") > -1) {
     var sContent = $('div[class*="content_spoiler"]');
     sContent.hide();
     var show_all = '<a class="show-all" class="btn bnt-sm" style="margin: 0 10px;background: #ccc;color: #484848;text-decoration:none; padding:0 4px; font-size:10px: border-radius:3px;" href="javascript:void(0);" title="Show All Spoiler">Show all spoiler</a>';
@@ -60,4 +65,5 @@ $(document).ready(function(){
         $('.show-spoiler').show();
         $('.show-all').show();
     });
+}
 });
