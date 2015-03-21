@@ -1,13 +1,11 @@
 // ==UserScript==
-// @name           mKaskus Spoiler Enabler - Beta
+// @name           mKaskus Spoiler Enabler
 // @namespace      https://openuserjs.org/users/zackad/
 // @homepageURL    http://www.kaskus.co.id/profile/4125324
 // @description    Spoiler di m.kaskus layaknya versi desktop
 // @author         zackad
-// @version        0.4 beta
-// @include        http://m.kaskus.co.id/post/*
-// @include        http://m.kaskus.co.id/thread/*
-// @include        http://m.kaskus.co.id/lastpost/*
+// @version        0.3.5
+// @include        http://m.kaskus.co.id/*
 // @include        /^https?://www.kaskus.co.id/thread/*/
 // @include        /^https?://www.kaskus.co.id/lastpost/*/
 // @include        /^https?://www.kaskus.co.id/post/*/
@@ -19,8 +17,92 @@
 // @run-at         document-end
 // ==/UserScript==
 $(document).ready(function(){
+    /*===========================================
+      GLOBAL SETTINGS
+    *\===========================================*/
+    var Settings = {
+        SHOW_ORIGIN_LINK: ['0'],   //ganti nilainya menjadi 1 untuk menampilkan grey link
+        SHOW_IMAGE_ONCLICK: ['1'], //0 = buka image di tab baru, 1 = buka image langsung ditempat
+        SHOW_IMAGE_SIZE: ['1'],    //0 = jangan tampilkan size gambar, 1 = tampilkan size gambar
+        SHOW_WHO_POSTED: ['0']     //0 = don't load, 1 = load , MASIH TAHAP DEVELOPMENT
+    };
+    /*===========================================
+      WHO POSTED ON THREAD  
+    *\===========================================*/
+    if (Settings.SHOW_WHO_POSTED == '1') {
+        var list = $('#content-wrapper .post-list .list-entry');
+        $('body').append('<div id="whopost"></div>');
+        
+        list.each(function(){
+            var tLink = $(this).children('a.link_thread_title').attr('href');
+            var ID = new String(tLink);
+            tLink = ID.split("/");
+            var tID = tLink[2];
+            console.log(tID); //log thread ID
+            
+            var who = $('<a>Who Posted</a>').attr('href', 'javascript:void(0)').click(function(){
+                var url = "http://kaskus.co.id/misc/whoposted/"+ tID + " .row";//" .main-content-full";
+                $('#whopost').load(url);// '.main-content-full');
+            });
+            $(this).children('.sub-meta').append(who);
+        });
+    }
+    /*===========================================
+      Origin Link Hider
+    *\===========================================*/
+    if (Settings.SHOW_ORIGIN_LINK == '0') {
     $('span[style*="font-size:10px;color: #888;"]').hide();
+    }
     
+    /*===========================================
+      Load Image on Click
+    *\===========================================*/
+    if (Settings.SHOW_IMAGE_ONCLICK == '1') {
+    var image = $('a[href$=".jpg"], a[href$=".png"], a[href$=".gif"], a[href$=".JPG"], a[href$=".PNG"], a[href$=".JPEG"], a[href$=".jpeg"], a[href$=".GIF"], a[href^="http://puu.sh/"]').css({'background-color': '#333', 'color' : 'white'});
+    image.each(function(){
+        var temp = $(this);
+        temp.attr({data : $(this).attr('href'), alt : "Click to Load Image"}).attr('href', 'javascript:void(0);');
+        
+        // get image size in bytes
+        if (Settings.SHOW_IMAGE_SIZE == '1') {
+        var xhr = $.ajax({
+            type : 'HEAD',
+            url : $(this).text(),
+            success : function(){
+                var size = xhr.getResponseHeader('Content-Length');
+                if (size > 1048576){
+                    size = Math.round((size/1048576)) + ' MB';
+                } else if (size > 1024){
+                    size = Math.round((size/1024)) + ' KB';
+                } else {
+                    size = size + ' Bytes';
+                }
+                temp.after('<span style = "font-size : 10px; color : #00f;"> ' + size + '</span>');//.css({'color' : 'blue', 'font-size' : '8px'});
+                //alert(size);
+            }});
+        }
+    });
+    image.click(function(){
+       var link = $(this).text();
+       var img = $("<img />").attr('src', link);
+       $(this).after(img);
+       $(this).next().next().hide();
+       $(this).hide();
+    });
+    }
+    /*
+        Forum Activities
+    */
+        var quoted = $('#subnav span a').has('sup').last();//.text("Forum Activities");
+        if (quoted.children('sup').text() > 0) {
+            quoted.attr('href', '/myforum/myquotedpost');
+        } else {
+            quoted.attr('href', '/myforum');
+        }
+    
+    /*===========================================================
+        SPOILER ENABLER 
+    *\===========================================================*/
     if (window.location.href.indexOf("m.kaskus.co.id") > -1) {
     var sContent = $('div[class*="content_spoiler"]');
     sContent.hide();
@@ -28,7 +110,7 @@ $(document).ready(function(){
     var hide_all = '<a class="hide-all" class="btn bnt-sm" style="margin: 0 10px;background: #ccc;color: #484848;text-decoration:none; padding:0 4px; font-size:10px: border-radius:3px;" href="javascript:void(0);" title="Hide All Spoiler Inside">Hide all</a>';
     var show_spoiler = '&nbsp&nbsp<a class="show-spoiler" class="btn btn-sm" style="background: #ccc;color: #484848;text-decoration:none; padding:0 4px; font-size:10px; border-radius:3px;" href="javascript:void(0);" title="Show Spoiler">Show</a>';
     var hide_spoiler = '<a class="hide-spoiler" class="btn bnt-sm" style="background: #ccc;color: #484848;text-decoration:none; padding:0 4px; font-size:10px: border-radius:3px;" href="javascript:void(0);" title="Hide Spoiler">Hide</a>';
-    
+    //var toggle_link = '<a class="toggle-link" class="btn btn-sm" style="background: #F7941D;color: #FFF; position:fixed; z-index:100; top:0 font-size:15px;" href="javascript:void(0);" title="Show Link">Show Origin Link</a>';
     $('#bbcode_div > i').after(show_spoiler, hide_spoiler, show_all, hide_all);
     $('.hide-spoiler').hide();
     $('.hide-all').hide();
@@ -51,41 +133,20 @@ $(document).ready(function(){
         currentSpoiler.hide();
     });
     
-        
-    // THIS IS BETA VERSION
-        
     $('.show-all').click(function(){
-        //sContent.show();
-        var me = $(this).parent();
-        var spoiler = me.closest('.spoiler');
-        spoiler.find('div[class*="content_spoiler"]').show();
-        spoiler.find('.hide-all').show();
-        spoiler.find('.show-all').hide();
-        spoiler.find('.show-spoiler').hide();
-        spoiler.find('.hide-spoiler').show();
-/*        
+        sContent.show();  
         $('.show-all').hide();
         $('.show-spoiler').hide();
         $('.hide-spoiler').show();
         $('.hide-all').show();
-*/
     });
     
     $('.hide-all').click(function(){
-        var me = $(this).parent();
-        var spoiler = me.closest('.spoiler');
-        spoiler.find('div[class*="content_spoiler"]').hide();
-        spoiler.find('.hide-all').hide();
-        spoiler.find('.show-all').show();
-        spoiler.find('.show-spoiler').show();
-        spoiler.find('.hide-spoiler').hide();
-/*
         sContent.hide();
         $('.hide-all').hide();
         $('.hide-spoiler').hide();
         $('.show-spoiler').show();
         $('.show-all').show();
-*/
     });
         
     function toggle_spoiler(){
@@ -95,12 +156,12 @@ $(document).ready(function(){
         $('.hide-spoiler').toggle();
         $('.show-spoiler').toggle();
     }
-        
+    /* Hotkey */
     window.addEventListener('keydown', function(e) {
     var keyCode = e.keyCode;
     var CSA = [e.ctrlKey, e.shiftKey, e.altKey];
-    console.log(keyCode);
-    console.log(String(CSA) + '; '+keyCode);
+    //console.log(keyCode);
+    //console.log(String(CSA) + '; '+keyCode);
     
     // caseof : Shift+X
     if( e.shiftKey && keyCode == 88 ){
