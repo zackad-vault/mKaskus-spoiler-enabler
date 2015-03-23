@@ -4,7 +4,7 @@
 // @homepageURL    http://www.kaskus.co.id/profile/4125324
 // @description    Spoiler di m.kaskus layaknya versi desktop
 // @author         zackad
-// @version        0.3.5
+// @version        0.3.6
 // @include        http://m.kaskus.co.id/*
 // @include        /^https?://www.kaskus.co.id/thread/*/
 // @include        /^https?://www.kaskus.co.id/lastpost/*/
@@ -24,7 +24,8 @@ $(document).ready(function(){
         SHOW_ORIGIN_LINK: ['0'],   //ganti nilainya menjadi 1 untuk menampilkan grey link
         SHOW_IMAGE_ONCLICK: ['1'], //0 = buka image di tab baru, 1 = buka image langsung ditempat
         SHOW_IMAGE_SIZE: ['1'],    //0 = jangan tampilkan size gambar, 1 = tampilkan size gambar
-        SHOW_WHO_POSTED: ['0']     //0 = don't load, 1 = load , MASIH TAHAP DEVELOPMENT
+        SHOW_WHO_POSTED: ['0'],    //0 = don't load, 1 = load , MASIH TAHAP DEVELOPMENT
+        DECIMAL_POINT: [2]         //angka dibelakang koma size gambar
     };
     /*===========================================
       WHO POSTED ON THREAD  
@@ -71,9 +72,23 @@ $(document).ready(function(){
             success : function(){
                 var size = xhr.getResponseHeader('Content-Length');
                 if (size > 1048576){
-                    size = Math.round((size/1048576)) + ' MB';
+                    size = size/1048576;// + ' MB';
+                    size = new String(size);
+                    var charLoc = size.indexOf(".");// + Settings.DECIMAL_POINT;
+                    if (charLoc > -1) {
+                        charLoc = parseInt(charLoc) + parseInt(Settings.DECIMAL_POINT) + 1;
+                        //console.log(charLoc);
+                        size = size.substr(0,charLoc) + ' MB';
+                    }
                 } else if (size > 1024){
-                    size = Math.round((size/1024)) + ' KB';
+                    size = size/1024;// + ' KB';
+                    size = new String(size);
+                    var charLoc = size.indexOf(".");// + Settings.DECIMAL_POINT;
+                    if (charLoc > -1) {
+                        charLoc = parseInt(charLoc) + parseInt(Settings.DECIMAL_POINT) + 1;
+                        //console.log(charLoc);
+                        size = size.substr(0,charLoc) + ' KB';
+                    }
                 } else {
                     size = size + ' Bytes';
                 }
