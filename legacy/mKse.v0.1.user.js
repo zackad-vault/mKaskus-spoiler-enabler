@@ -12,6 +12,9 @@
 // @require        http://code.jquery.com/jquery-1.10.1.min.js
 // @run-at         document-end
 // ==/UserScript==
+/*
+	initial version
+*/
 $(document).ready(function(){
     var sContent = $('div[class*="content_spoiler"]');
     sContent.hide();
