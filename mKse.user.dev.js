@@ -4,7 +4,7 @@
 // @homepageURL    http://www.kaskus.co.id/profile/4125324
 // @description    Spoiler di m.kaskus layaknya versi desktop
 // @author         zackad
-// @version        0.3.6
+// @version        0.3.6.1
 // @include        http://m.kaskus.co.id/*
 // @include        /^https?://www.kaskus.co.id/thread/*/
 // @include        /^https?://www.kaskus.co.id/lastpost/*/
@@ -39,14 +39,15 @@ $(document).ready(function(){
             var ID = new String(tLink);
             tLink = ID.split("/");
             var tID = tLink[2];
-            console.log(tID); //log thread ID
+            //console.log(tID); //log thread ID
+            var urlThread = "http://kaskus.co.id/misc/whoposted/"+ tID;
             
-            var who = $('<a>Who Posted</a>').attr('href', 'javascript:void(0)').click(function(){
-                var url = "http://kaskus.co.id/misc/whoposted/"+ tID + " .row";//" .main-content-full";
-                $('#whopost').load(url);// '.main-content-full');
-            });
+            //open whoposted on new tab :hammer:
+            var who = $('<a>Who Posted</a>')
+                .attr('href', urlThread)
+                .attr('target', '_blank');
             $(this).children('.sub-meta').append(who);
-        });
+            });
     }
     /*===========================================
       Origin Link Hider
