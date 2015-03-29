@@ -4,7 +4,7 @@
 // @homepageURL    http://www.kaskus.co.id/profile/4125324
 // @description    Spoiler di m.kaskus layaknya versi desktop
 // @author         zackad
-// @version        0.3.6.1
+// @version        0.3.6.2
 // @include        http://m.kaskus.co.id/*
 // @include        /^https?://www.kaskus.co.id/thread/*/
 // @include        /^https?://www.kaskus.co.id/lastpost/*/
@@ -24,29 +24,73 @@ $(document).ready(function(){
         SHOW_ORIGIN_LINK: ['0'],   //ganti nilainya menjadi 1 untuk menampilkan grey link
         SHOW_IMAGE_ONCLICK: ['1'], //0 = buka image di tab baru, 1 = buka image langsung ditempat
         SHOW_IMAGE_SIZE: ['1'],    //0 = jangan tampilkan size gambar, 1 = tampilkan size gambar
-        SHOW_WHO_POSTED: ['0'],    //0 = don't load, 1 = load , MASIH TAHAP DEVELOPMENT
-        DECIMAL_POINT: [2]         //angka dibelakang koma size gambar
+        DECIMAL_POINT: [2],        //angka dibelakang koma size gambar
+        SHOW_LASTPAGE: ['1'],      //open thread's last page
+        //experimental mode
+        SHOW_WHO_POSTED: ['1'],    //0 = don't load, 1 = load , MASIH TAHAP DEVELOPMENT
+        QUICK_LINKS: ['0']         //show quick links
     };
+    var QL = new Array(
+        'Computer,19',
+        'Anime,26',
+        'ISN,183',
+        'CCPB,14',
+        'Linux,65'
+    );
+    //console.log(QL);
+    /*===========================================
+      SHOW LAST PAGE LINK
+    *\===========================================*/
+    if (Settings.SHOW_LASTPAGE == '1' && window.location.href == 'http://m.kaskus.co.id/myforum') {
+        var list = $('#content-wrapper .post-list .list-entry');
+        list.each(function(){
+            var b = $(this).children('a').attr('href');
+            var TID = getTID(b);
+            if (TID.length > 5) {
+                var lastpage = 'http://m.kaskus.co.id/lastpost/' + TID;
+                //console.log(TID);
+                lastpage = '<span><a href="' + lastpage + '"> | Last Page | </a></span>';
+                $(this).children('.sub-meta')
+                    .append(lastpage);
+            }
+        });
+    }
+    
+    
+    /*===========================================
+      SHOW QUICK LINKS
+    *\===========================================*/
+    if (Settings.QUICK_LINKS == '1') {
+        var qlWrapper = '<div id="ql"></div>';
+        $('#search').after(qlWrapper);
+        //QL.each(function(){
+            
+        //}
+        
+        $('ql').append(QL);
+    }
+    
     /*===========================================
       WHO POSTED ON THREAD  
     *\===========================================*/
     if (Settings.SHOW_WHO_POSTED == '1') {
         var list = $('#content-wrapper .post-list .list-entry');
-        $('body').append('<div id="whopost"></div>');
         
         list.each(function(){
-            var tLink = $(this).children('a.link_thread_title').attr('href');
-            var ID = new String(tLink);
-            tLink = ID.split("/");
-            var tID = tLink[2];
-            //console.log(tID); //log thread ID
-            var urlThread = "http://kaskus.co.id/misc/whoposted/"+ tID;
-            
-            //open whoposted on new tab :hammer:
-            var who = $('<a>Who Posted</a>')
-                .attr('href', urlThread)
-                .attr('target', '_blank');
-            $(this).children('.sub-meta').append(who);
+            var tLink = $(this).children('a').attr('href');
+            var TID = getTID(tLink);
+            //console.log(TID); //log thread ID
+            if (TID.length > 5){
+                var urlThread = "http://kaskus.co.id/misc/whoposted/"+ TID;
+                
+                //open whoposted on new tab :hammer:
+                var who = $('<a>Who Posted</a>')
+                    .attr('href', urlThread)
+                    .attr('target', '_blank');
+                var span = $('<span></span>').append(who);
+                $(this).children('.sub-meta')
+                    .append(span);
+            }
             });
     }
     /*===========================================
@@ -164,7 +208,9 @@ $(document).ready(function(){
         $('.show-spoiler').show();
         $('.show-all').show();
     });
-        
+    /*===========================================
+      FUNCTION DECLALATION
+    *\===========================================*/    
     function toggle_spoiler(){
         sContent.toggle();
         $('.hide-all').toggle();
@@ -172,6 +218,14 @@ $(document).ready(function(){
         $('.hide-spoiler').toggle();
         $('.show-spoiler').toggle();
     }
+    
+    function getTID(a){
+        var ID = new String(a);
+        a = ID.split("/");
+        var tID = a[2];
+        return tID;
+    }
+    
     /* Hotkey */
     window.addEventListener('keydown', function(e) {
     var keyCode = e.keyCode;
