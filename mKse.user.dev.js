@@ -4,7 +4,7 @@
 // @homepageURL    http://www.kaskus.co.id/profile/4125324
 // @description    Spoiler di m.kaskus layaknya versi desktop
 // @author         zackad
-// @version        0.3.6.2
+// @version        0.3.6.3
 // @include        http://m.kaskus.co.id/*
 // @include        /^https?://www.kaskus.co.id/thread/*/
 // @include        /^https?://www.kaskus.co.id/lastpost/*/
@@ -21,14 +21,14 @@ $(document).ready(function(){
       GLOBAL SETTINGS
     *\===========================================*/
     var Settings = {
-        SHOW_ORIGIN_LINK: ['0'],   //ganti nilainya menjadi 1 untuk menampilkan grey link
-        SHOW_IMAGE_ONCLICK: ['1'], //0 = buka image di tab baru, 1 = buka image langsung ditempat
-        SHOW_IMAGE_SIZE: ['1'],    //0 = jangan tampilkan size gambar, 1 = tampilkan size gambar
-        DECIMAL_POINT: [2],        //angka dibelakang koma size gambar
-        SHOW_LASTPAGE: ['1'],      //open thread's last page
+        SHOW_ORIGIN_LINK: false,   //ganti nilainya menjadi 'true' untuk menampilkan grey link
+        SHOW_IMAGE_ONCLICK: true,  //false = buka image di tab baru, true = buka image langsung ditempat
+        SHOW_IMAGE_SIZE: true,     //false = jangan tampilkan size gambar, true = tampilkan size gambar
+        DECIMAL_POINT: 2,          //angka dibelakang koma size gambar
+        SHOW_LASTPAGE: true,       //open thread's last page
         //experimental mode
-        SHOW_WHO_POSTED: ['1'],    //0 = don't load, 1 = load , MASIH TAHAP DEVELOPMENT
-        QUICK_LINKS: ['0']         //show quick links
+        SHOW_WHO_POSTED: false,    //false = don't show, true = show , MASIH TAHAP DEVELOPMENT
+        QUICK_LINKS: false         //show quick links
     };
     var QL = new Array(
         'Computer,19',
@@ -39,12 +39,25 @@ $(document).ready(function(){
     );
     //console.log(QL);
     /*===========================================
+      REDIRECT LINK REMOVER [thanks : AMZZZMA]
+    *\===========================================*/
+    
+    var aEls = document.getElementsByTagName('a');
+    for (var i = 0, aEl; aEl = aEls[i]; i++) {
+        aEl.href = aEl.href.replace('http://www.kaskus.co.id/redirect?url=','');
+    }
+    var aEls = document.getElementsByTagName('a');
+    for (var i = 0, aEl; aEl = aEls[i]; i++) {
+        aEl.href = aEl.href.replace('http://m.kaskus.co.id/redirect?url=','');
+    }
+    /*===========================================
       SHOW LAST PAGE LINK
     *\===========================================*/
-    if (Settings.SHOW_LASTPAGE == '1' && window.location.href == 'http://m.kaskus.co.id/myforum') {
+    if (Settings.SHOW_LASTPAGE == true && window.location.href == 'http://m.kaskus.co.id/myforum') {
         var list = $('#content-wrapper .post-list .list-entry');
         list.each(function(){
             var b = $(this).children('a').attr('href');
+            //console.log(b);
             var TID = getTID(b);
             if (TID.length > 5) {
                 var lastpage = 'http://m.kaskus.co.id/lastpost/' + TID;
@@ -60,7 +73,7 @@ $(document).ready(function(){
     /*===========================================
       SHOW QUICK LINKS
     *\===========================================*/
-    if (Settings.QUICK_LINKS == '1') {
+    if (Settings.QUICK_LINKS == true) {
         var qlWrapper = '<div id="ql"></div>';
         $('#search').after(qlWrapper);
         //QL.each(function(){
@@ -73,7 +86,7 @@ $(document).ready(function(){
     /*===========================================
       WHO POSTED ON THREAD  
     *\===========================================*/
-    if (Settings.SHOW_WHO_POSTED == '1') {
+    if (Settings.SHOW_WHO_POSTED == true) {
         var list = $('#content-wrapper .post-list .list-entry');
         
         list.each(function(){
@@ -96,24 +109,35 @@ $(document).ready(function(){
     /*===========================================
       Origin Link Hider
     *\===========================================*/
-    if (Settings.SHOW_ORIGIN_LINK == '0') {
+    if (Settings.SHOW_ORIGIN_LINK == false) {
     $('span[style*="font-size:10px;color: #888;"]').hide();
     }
     
     /*===========================================
       Load Image on Click
     *\===========================================*/
-    if (Settings.SHOW_IMAGE_ONCLICK == '1') {
+    if (Settings.SHOW_IMAGE_ONCLICK == true) {
     var image = $('a[href$=".jpg"], a[href$=".png"], a[href$=".gif"], a[href$=".JPG"], a[href$=".PNG"], a[href$=".JPEG"], a[href$=".jpeg"], a[href$=".GIF"], a[href^="http://puu.sh/"]').css({'background-color': '#333', 'color' : 'white'});
     image.each(function(){
         var temp = $(this);
+        //parsing redirect link
+        /*
+        if (temp.attr('href').indexOf('redirect') > -1){
+            var rLink = temp.attr('href');
+            //console.log(rLink);
+            rLink = new String(rLink);
+            var tLink = rLink.split('=');
+            rLink = tLink[1];
+            //console.log(rLink);
+            temp.attr('href', rLink);
+        }*/
         temp.attr({data : $(this).attr('href'), alt : "Click to Load Image"}).attr('href', 'javascript:void(0);');
         
         // get image size in bytes
-        if (Settings.SHOW_IMAGE_SIZE == '1') {
+        if (Settings.SHOW_IMAGE_SIZE == true) {
         var xhr = $.ajax({
             type : 'HEAD',
-            url : $(this).text(),
+            url : $(this).attr('data'),
             success : function(){
                 var size = xhr.getResponseHeader('Content-Length');
                 if (size > 1048576){
@@ -143,16 +167,17 @@ $(document).ready(function(){
         }
     });
     image.click(function(){
-       var link = $(this).text();
+       var link = $(this).attr('data');
+        console.log(link);
        var img = $("<img />").attr('src', link);
        $(this).after(img);
        $(this).next().next().hide();
        $(this).hide();
     });
     }
-    /*
-        Forum Activities
-    */
+    /*======================================
+        Forum Activities Link
+    \*======================================*/
         var quoted = $('#subnav span a').has('sup').last();//.text("Forum Activities");
         if (quoted.children('sup').text() > 0) {
             quoted.attr('href', '/myforum/myquotedpost');
@@ -209,7 +234,7 @@ $(document).ready(function(){
         $('.show-all').show();
     });
     /*===========================================
-      FUNCTION DECLALATION
+      FUNCTION DECLALARION
     *\===========================================*/    
     function toggle_spoiler(){
         sContent.toggle();
@@ -218,11 +243,11 @@ $(document).ready(function(){
         $('.hide-spoiler').toggle();
         $('.show-spoiler').toggle();
     }
-    
+    //get thread ID
     function getTID(a){
         var ID = new String(a);
         a = ID.split("/");
-        var tID = a[2];
+        var tID = a[4];
         return tID;
     }
     
