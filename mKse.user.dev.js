@@ -4,7 +4,7 @@
 // @homepageURL    http://www.kaskus.co.id/profile/4125324
 // @description    Spoiler di m.kaskus layaknya versi desktop
 // @author         zackad
-// @version        0.3.6.3
+// @version        0.3.6.4
 // @include        http://m.kaskus.co.id/*
 // @include        /^https?://www.kaskus.co.id/thread/*/
 // @include        /^https?://www.kaskus.co.id/lastpost/*/
@@ -26,6 +26,7 @@ $(document).ready(function(){
         SHOW_IMAGE_SIZE: true,     //false = jangan tampilkan size gambar, true = tampilkan size gambar
         DECIMAL_POINT: 2,          //angka dibelakang koma size gambar
         SHOW_LASTPAGE: true,       //open thread's last page
+        TO_WAP_LINK: true,         //convert kaskus link to wap version (m.kaskus)
         //experimental mode
         SHOW_WHO_POSTED: false,    //false = don't show, true = show , MASIH TAHAP DEVELOPMENT
         QUICK_LINKS: false         //show quick links
@@ -49,6 +50,17 @@ $(document).ready(function(){
     var aEls = document.getElementsByTagName('a');
     for (var i = 0, aEl; aEl = aEls[i]; i++) {
         aEl.href = aEl.href.replace('http://m.kaskus.co.id/redirect?url=','');
+    }
+    
+    if (Settings.TO_WAP_LINK == true && window.location.href.indexOf('m.kaskus.co.id') > -1) {
+        var aEls = document.getElementsByTagName('a');
+        for (var i = 0, aEl; aEl = aEls[i]; i++) {
+            aEl.href = aEl.href.replace('http://www.kaskus.co.id/','http://m.kaskus.co.id/');
+        }
+        var aEls = document.getElementsByTagName('a');
+        for (var i = 0, aEl; aEl = aEls[i]; i++) {
+            aEl.href = aEl.href.replace('http://kaskus.co.id/','http://m.kaskus.co.id/');
+        }
     }
     /*===========================================
       SHOW LAST PAGE LINK
