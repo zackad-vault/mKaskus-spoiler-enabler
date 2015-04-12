@@ -12,6 +12,7 @@ Developed and tested with Coolnovo browser (based on Chromium 27), other browser
 - last page link added on in myforum page
 - open whoposted link on new tab
 - redirect link removed
+- convert kaskus link to wap version
 - **New** : Load image link by click
 - **New** : Show image size before load
 - **New** : Show decimal point on image size
