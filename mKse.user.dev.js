@@ -4,7 +4,7 @@
 // @homepageURL    http://www.kaskus.co.id/profile/4125324
 // @description    Spoiler di m.kaskus layaknya versi desktop
 // @author         zackad
-// @version        0.3.6.4
+// @version        0.3.6.5
 // @include        http://m.kaskus.co.id/*
 // @include        /^https?://www.kaskus.co.id/thread/*/
 // @include        /^https?://www.kaskus.co.id/lastpost/*/
@@ -14,8 +14,14 @@
 // @grant          GM_addStyle
 // @license        MIT License
 // @require        http://code.jquery.com/jquery-1.10.1.min.js
+// @require        http://cdn.kaskus.com/themes_2.0/js/ajaxfileupload.js
 // @run-at         document-end
 // ==/UserScript==
+/*
+    LATEST UPDATE
+    - redirect link bug fixed
+    - experimental mode, upload file kaskus host
+*/
 $(document).ready(function(){
     /*===========================================
       GLOBAL SETTINGS
@@ -40,15 +46,30 @@ $(document).ready(function(){
     );
     //console.log(QL);
     /*===========================================
+      UPLOAD FILE
+    *\===========================================*/
+/*
+    var browse = '<input type="file" onchange="ajaxFileUpload();" name="forumimg" id="browse" class="browse" />';
+    var ajaxScript = 'http://cdn.kaskus.com/themes_2.0/js/ajaxfileupload.js';
+    var insertAjax = '<script type="text/javascript" src="'+ ajaxScript + '"></script><script type="text/javascript" src="http://code.jquery.com/jquery-1.10.1.min.js"></script>';
+    $('#search').after(browse);
+    $('body').append(insertAjax);
+*/    
+    /*===========================================
       REDIRECT LINK REMOVER [thanks : AMZZZMA]
     *\===========================================*/
     
     var aEls = document.getElementsByTagName('a');
     for (var i = 0, aEl; aEl = aEls[i]; i++) {
+        aEl.href = aEl.href.replace('%3A%2F%2F','://');
+        aEl.href = aEl.href.split('%2F').join('/');
         aEl.href = aEl.href.replace('http://www.kaskus.co.id/redirect?url=','');
     }
     var aEls = document.getElementsByTagName('a');
     for (var i = 0, aEl; aEl = aEls[i]; i++) {
+        //console.log(aEls.href);
+        aEl.href = aEl.href.replace('%3A%2F%2F','://');
+        aEl.href = aEl.href.split("%2F").join("/");
         aEl.href = aEl.href.replace('http://m.kaskus.co.id/redirect?url=','');
     }
     
@@ -275,5 +296,4 @@ $(document).ready(function(){
         toggle_spoiler()
     }
 }, true);
-}
-});
+}});
