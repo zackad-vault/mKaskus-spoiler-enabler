@@ -4,7 +4,7 @@
 // @homepageURL    http://www.kaskus.co.id/profile/4125324
 // @description    Spoiler di m.kaskus layaknya versi desktop
 // @author         zackad
-// @version        0.3.6.5
+// @version        0.3.6.6
 // @include        http://m.kaskus.co.id/*
 // @include        /^https?://www.kaskus.co.id/thread/*/
 // @include        /^https?://www.kaskus.co.id/lastpost/*/
@@ -19,6 +19,10 @@
 // ==/UserScript==
 /*
     LATEST UPDATE
+    v0.3.6.6
+    - replace percent-encoding in link
+
+    v0.3.6.5
     - redirect link bug fixed
     - experimental mode, upload file kaskus host
 */
@@ -58,19 +62,42 @@ $(document).ready(function(){
     /*===========================================
       REDIRECT LINK REMOVER [thanks : AMZZZMA]
     *\===========================================*/
-    
+/*    
     var aEls = document.getElementsByTagName('a');
     for (var i = 0, aEl; aEl = aEls[i]; i++) {
         aEl.href = aEl.href.replace('%3A%2F%2F','://');
         aEl.href = aEl.href.split('%2F').join('/');
         aEl.href = aEl.href.replace('http://www.kaskus.co.id/redirect?url=','');
     }
-    var aEls = document.getElementsByTagName('a');
+*/
+    //var aEls = document.getElementsByTagName('a');
+    if (window.location.href.indexOf('m.kaskus.co.id') > -1) {
+        var aEls = $('#content-wrapper .entry-content a');
+    } else {
+        var aEls = $('.postlist .entry a');
+    }
     for (var i = 0, aEl; aEl = aEls[i]; i++) {
         //console.log(aEls.href);
-        aEl.href = aEl.href.replace('%3A%2F%2F','://');
+        aEl.href = aEl.href.replace('%3A%2F%2F','://')
+            .replace(/%21/g,'!')
+            .replace(/%23/g,'#')
+            .replace(/%24/g,'$')
+            .replace(/%26/g,'&')
+            .replace(/%28/g,'(')
+            .replace(/%29/g,')')
+            .replace(/%2A/g,'*')
+            .replace(/%2B/g,'+')
+            .replace(/%2C/g,',')
+            .replace(/%3A/g,':')
+            .replace(/%3B/g,';')
+            .replace(/%3D/g,'=')
+            .replace(/%3F/g,'?')
+            .replace(/%40/g,'@')
+            .replace(/%5B/g,'[')
+            .replace(/%5D/g,']');
         aEl.href = aEl.href.split("%2F").join("/");
         aEl.href = aEl.href.replace('http://m.kaskus.co.id/redirect?url=','');
+        aEl.href = aEl.href.replace('http://www.kaskus.co.id/redirect?url=','');
     }
     
     if (Settings.TO_WAP_LINK == true && window.location.href.indexOf('m.kaskus.co.id') > -1) {
@@ -268,7 +295,7 @@ $(document).ready(function(){
     });
     /*===========================================
       FUNCTION DECLALARION
-    *\===========================================*/    
+    *\===========================================*/
     function toggle_spoiler(){
         sContent.toggle();
         $('.hide-all').toggle();
