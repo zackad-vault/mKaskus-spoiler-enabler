@@ -4,7 +4,7 @@
 // @homepageURL    http://www.kaskus.co.id/profile/4125324
 // @description    Spoiler di m.kaskus layaknya versi desktop
 // @author         zackad
-// @version        0.3.6.6
+// @version        0.3.6.7
 // @include        http://m.kaskus.co.id/*
 // @include        /^https?://www.kaskus.co.id/thread/*/
 // @include        /^https?://www.kaskus.co.id/lastpost/*/
@@ -19,9 +19,12 @@
 // ==/UserScript==
 /*
     LATEST UPDATE
+    v0.3.6.7
+    - use decodeURI instead replace
+    - jQuery selector used
+    - getTID function fixed
     v0.3.6.6
     - replace percent-encoding in link
-
     v0.3.6.5
     - redirect link bug fixed
     - experimental mode, upload file kaskus host
@@ -62,15 +65,6 @@ $(document).ready(function(){
     /*===========================================
       REDIRECT LINK REMOVER [thanks : AMZZZMA]
     *\===========================================*/
-/*    
-    var aEls = document.getElementsByTagName('a');
-    for (var i = 0, aEl; aEl = aEls[i]; i++) {
-        aEl.href = aEl.href.replace('%3A%2F%2F','://');
-        aEl.href = aEl.href.split('%2F').join('/');
-        aEl.href = aEl.href.replace('http://www.kaskus.co.id/redirect?url=','');
-    }
-*/
-    //var aEls = document.getElementsByTagName('a');
     if (window.location.href.indexOf('m.kaskus.co.id') > -1) {
         var aEls = $('#content-wrapper .entry-content a');
     } else {
@@ -78,35 +72,15 @@ $(document).ready(function(){
     }
     for (var i = 0, aEl; aEl = aEls[i]; i++) {
         //console.log(aEls.href);
-        aEl.href = aEl.href.replace('%3A%2F%2F','://')
-            .replace(/%21/g,'!')
-            .replace(/%23/g,'#')
-            .replace(/%24/g,'$')
-            .replace(/%26/g,'&')
-            .replace(/%28/g,'(')
-            .replace(/%29/g,')')
-            .replace(/%2A/g,'*')
-            .replace(/%2B/g,'+')
-            .replace(/%2C/g,',')
-            .replace(/%3A/g,':')
-            .replace(/%3B/g,';')
-            .replace(/%3D/g,'=')
-            .replace(/%3F/g,'?')
-            .replace(/%40/g,'@')
-            .replace(/%5B/g,'[')
-            .replace(/%5D/g,']');
-        aEl.href = aEl.href.split("%2F").join("/");
+        aEl.href = unescape(decodeURI(aEl.href));
         aEl.href = aEl.href.replace('http://m.kaskus.co.id/redirect?url=','');
         aEl.href = aEl.href.replace('http://www.kaskus.co.id/redirect?url=','');
     }
     
     if (Settings.TO_WAP_LINK == true && window.location.href.indexOf('m.kaskus.co.id') > -1) {
-        var aEls = document.getElementsByTagName('a');
+        var aEls = $('#content-wrapper .entry-content a');
         for (var i = 0, aEl; aEl = aEls[i]; i++) {
             aEl.href = aEl.href.replace('http://www.kaskus.co.id/','http://m.kaskus.co.id/');
-        }
-        var aEls = document.getElementsByTagName('a');
-        for (var i = 0, aEl; aEl = aEls[i]; i++) {
             aEl.href = aEl.href.replace('http://kaskus.co.id/','http://m.kaskus.co.id/');
         }
     }
@@ -119,6 +93,7 @@ $(document).ready(function(){
             var b = $(this).children('a').attr('href');
             //console.log(b);
             var TID = getTID(b);
+            //console.log(TID);
             if (TID.length > 5) {
                 var lastpage = 'http://m.kaskus.co.id/lastpost/' + TID;
                 //console.log(TID);
@@ -152,7 +127,7 @@ $(document).ready(function(){
         list.each(function(){
             var tLink = $(this).children('a').attr('href');
             var TID = getTID(tLink);
-            //console.log(TID); //log thread ID
+            console.log(TID); //log thread ID
             if (TID.length > 5){
                 var urlThread = "http://kaskus.co.id/misc/whoposted/"+ TID;
                 
@@ -180,17 +155,6 @@ $(document).ready(function(){
     var image = $('a[href$=".jpg"], a[href$=".png"], a[href$=".gif"], a[href$=".JPG"], a[href$=".PNG"], a[href$=".JPEG"], a[href$=".jpeg"], a[href$=".GIF"], a[href^="http://puu.sh/"]').css({'background-color': '#333', 'color' : 'white'});
     image.each(function(){
         var temp = $(this);
-        //parsing redirect link
-        /*
-        if (temp.attr('href').indexOf('redirect') > -1){
-            var rLink = temp.attr('href');
-            //console.log(rLink);
-            rLink = new String(rLink);
-            var tLink = rLink.split('=');
-            rLink = tLink[1];
-            //console.log(rLink);
-            temp.attr('href', rLink);
-        }*/
         temp.attr({data : $(this).attr('href'), alt : "Click to Load Image"}).attr('href', 'javascript:void(0);');
         
         // get image size in bytes
@@ -307,7 +271,7 @@ $(document).ready(function(){
     function getTID(a){
         var ID = new String(a);
         a = ID.split("/");
-        var tID = a[4];
+        var tID = a[2];
         return tID;
     }
     
