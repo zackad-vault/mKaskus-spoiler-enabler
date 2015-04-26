@@ -4,7 +4,7 @@
 // @homepageURL    http://www.kaskus.co.id/profile/4125324
 // @description    Spoiler di m.kaskus layaknya versi desktop
 // @author         zackad
-// @version        0.3.6.7
+// @version        0.3.6.8
 // @include        http://m.kaskus.co.id/*
 // @include        /^https?://www.kaskus.co.id/thread/*/
 // @include        /^https?://www.kaskus.co.id/lastpost/*/
@@ -18,16 +18,15 @@
 // @run-at         document-end
 // ==/UserScript==
 /*
+// @exclude        /^http://m.kaskus.co.id/(?:reputation|visitormessage|pm)/*
     LATEST UPDATE
+    v0.3.6.8
+    - permalink single post
+    - restyle user-post-tool
     v0.3.6.7
     - use decodeURI instead replace
     - jQuery selector used
     - getTID function fixed
-    v0.3.6.6
-    - replace percent-encoding in link
-    v0.3.6.5
-    - redirect link bug fixed
-    - experimental mode, upload file kaskus host
 */
 $(document).ready(function(){
     /*===========================================
@@ -62,6 +61,30 @@ $(document).ready(function(){
     $('#search').after(browse);
     $('body').append(insertAjax);
 */    
+    
+    /*===========================================
+      PERMALINK SINGLE POST
+    *\===========================================*/
+    var single_post = $('.author a.permalink');
+    single_post.each(function(){
+        var href = $(this).attr('href');
+        href = href.replace('#post','');
+        var prefix = 'http://www.kaskus.co.id/show_post/';
+        href = prefix + href;
+        $(this).attr('href',href).attr('target', '_blank');
+        //console.log(href);
+    });
+    
+    /*===========================================
+      ADAPTING TO QR MOBILE
+    *\===========================================*/
+    //add class qq btn blue
+    $('.footer-act a.user-post-tool').addClass('btn blue');
+    $('.footer-act a[href*="edit_post"]').removeClass('btn blue').addClass('btn orange');
+    //$('.reply-input:last, a[href*="/post_reply/"], a[href="#message"]').hide();
+    //$('.reply-input:last'); 
+    $('a[href="#message"]').remove();
+    
     /*===========================================
       REDIRECT LINK REMOVER [thanks : AMZZZMA]
     *\===========================================*/
@@ -82,6 +105,7 @@ $(document).ready(function(){
         for (var i = 0, aEl; aEl = aEls[i]; i++) {
             aEl.href = aEl.href.replace('http://www.kaskus.co.id/','http://m.kaskus.co.id/');
             aEl.href = aEl.href.replace('http://kaskus.co.id/','http://m.kaskus.co.id/');
+            aEl.href = aEl.href.replace('http://fjb.kaskus.co.id/','http://fjb.m.kaskus.co.id/');
         }
     }
     /*===========================================
@@ -127,7 +151,7 @@ $(document).ready(function(){
         list.each(function(){
             var tLink = $(this).children('a').attr('href');
             var TID = getTID(tLink);
-            console.log(TID); //log thread ID
+            //console.log(TID); //log thread ID
             if (TID.length > 5){
                 var urlThread = "http://kaskus.co.id/misc/whoposted/"+ TID;
                 
