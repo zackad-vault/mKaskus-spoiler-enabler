@@ -4,8 +4,9 @@
 // @homepageURL    http://www.kaskus.co.id/profile/4125324
 // @description    Spoiler di m.kaskus layaknya versi desktop
 // @author         zackad
-// @version        0.3.6.9
+// @version        0.3.6.10
 // @include        http://m.kaskus.co.id/*
+// @include        http://fjb.m.kaskus.co.id/*
 // @include        /^https?://www.kaskus.co.id/thread/*/
 // @include        /^https?://www.kaskus.co.id/lastpost/*/
 // @include        /^https?://www.kaskus.co.id/post/*/
@@ -20,12 +21,11 @@
 /*
 // @exclude        /^http://m.kaskus.co.id/(?:reputation|visitormessage|pm)/*
     LATEST UPDATE
+    v0.3.6.10
+    - add include fjb.m.kaskus
     v0.3.6.9
     - patch for image query link
     - hide (again) original qr
-    v0.3.6.8
-    - permalink single post
-    - restyle user-post-tool
 */
 $(document).ready(function(){
     /*===========================================
