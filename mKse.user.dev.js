@@ -4,7 +4,7 @@
 // @homepageURL    http://www.kaskus.co.id/profile/4125324
 // @description    Spoiler di m.kaskus layaknya versi desktop
 // @author         zackad
-// @version        0.3.6.8
+// @version        0.3.6.9
 // @include        http://m.kaskus.co.id/*
 // @include        /^https?://www.kaskus.co.id/thread/*/
 // @include        /^https?://www.kaskus.co.id/lastpost/*/
@@ -20,13 +20,12 @@
 /*
 // @exclude        /^http://m.kaskus.co.id/(?:reputation|visitormessage|pm)/*
     LATEST UPDATE
+    v0.3.6.9
+    - patch for image query link
+    - hide (again) original qr
     v0.3.6.8
     - permalink single post
     - restyle user-post-tool
-    v0.3.6.7
-    - use decodeURI instead replace
-    - jQuery selector used
-    - getTID function fixed
 */
 $(document).ready(function(){
     /*===========================================
@@ -81,9 +80,13 @@ $(document).ready(function(){
     //add class qq btn blue
     $('.footer-act a.user-post-tool').addClass('btn blue');
     $('.footer-act a[href*="edit_post"]').removeClass('btn blue').addClass('btn orange');
-    //$('.reply-input:last, a[href*="/post_reply/"], a[href="#message"]').hide();
+    if (window.location.href.indexOf('pm' || 'visitormessage' || 'reputation') > -1){
+        $('a[href="#reply_form"]').remove();
+    }else {
+        $('.reply-input:last, a[href="#reply_form"]').remove();
+    }
     //$('.reply-input:last'); 
-    $('a[href="#message"]').remove();
+    //$('a[href="#message"]').remove();
     
     /*===========================================
       REDIRECT LINK REMOVER [thanks : AMZZZMA]
@@ -176,7 +179,18 @@ $(document).ready(function(){
       Load Image on Click
     *\===========================================*/
     if (Settings.SHOW_IMAGE_ONCLICK == true) {
-    var image = $('a[href$=".jpg"], a[href$=".png"], a[href$=".gif"], a[href$=".JPG"], a[href$=".PNG"], a[href$=".JPEG"], a[href$=".jpeg"], a[href$=".GIF"], a[href^="http://puu.sh/"]').css({'background-color': '#333', 'color' : 'white'});
+    var imgSelector = ''
+        +'a[href$=".jpg"],'
+        +'a[href$=".png"],'
+        +'a[href$=".gif"],'
+        +'a[href$=".JPG"],'
+        +'a[href$=".PNG"],'
+        +'a[href$=".JPEG"],'
+        +'a[href$=".jpeg"],'
+        +'a[href$=".GIF"],'
+        +'a[href*=".jpg?"],'
+        +'a[href^="http://puu.sh/"]';
+    var image = $(imgSelector).css({'background-color': '#333', 'color' : 'white'});
     image.each(function(){
         var temp = $(this);
         temp.attr({data : $(this).attr('href'), alt : "Click to Load Image"}).attr('href', 'javascript:void(0);');
