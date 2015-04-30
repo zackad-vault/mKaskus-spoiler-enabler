@@ -4,7 +4,7 @@
 // @homepageURL    http://www.kaskus.co.id/profile/4125324
 // @description    Spoiler di m.kaskus layaknya versi desktop
 // @author         zackad
-// @version        0.3.6.10
+// @version        0.3.6.11
 // @include        http://m.kaskus.co.id/*
 // @include        http://fjb.m.kaskus.co.id/*
 // @include        /^https?://www.kaskus.co.id/thread/*/
@@ -21,11 +21,10 @@
 /*
 // @exclude        /^http://m.kaskus.co.id/(?:reputation|visitormessage|pm)/*
     LATEST UPDATE
+    v0.3.6.11
+    - exclude function
     v0.3.6.10
     - add include fjb.m.kaskus
-    v0.3.6.9
-    - patch for image query link
-    - hide (again) original qr
 */
 $(document).ready(function(){
     /*===========================================
@@ -80,13 +79,11 @@ $(document).ready(function(){
     //add class qq btn blue
     $('.footer-act a.user-post-tool').addClass('btn blue');
     $('.footer-act a[href*="edit_post"]').removeClass('btn blue').addClass('btn orange');
-    if (window.location.href.indexOf('pm' || 'visitormessage' || 'reputation') > -1){
+    if (!getExclude()){
         $('a[href="#reply_form"]').remove();
     }else {
         $('.reply-input:last, a[href="#reply_form"]').remove();
     }
-    //$('.reply-input:last'); 
-    //$('a[href="#message"]').remove();
     
     /*===========================================
       REDIRECT LINK REMOVER [thanks : AMZZZMA]
@@ -312,6 +309,23 @@ $(document).ready(function(){
         var tID = a[2];
         return tID;
     }
+    //get excluded location
+    function getExclude(){
+        var excluded = [
+            'pm',
+            'visitormessage',
+            'reputation'
+            ];
+        for (var i = 0; i < excluded.lenght; i++){
+            if (window.location.href.indexOf(excluded[i]) > -1){
+                return true;
+                break;
+            } else {
+                return false;
+            }
+        }
+    }
+    
     
     /* Hotkey */
     window.addEventListener('keydown', function(e) {
