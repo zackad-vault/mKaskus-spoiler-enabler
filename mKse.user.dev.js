@@ -79,7 +79,7 @@ $(document).ready(function(){
     //add class qq btn blue
     $('.footer-act a.user-post-tool').addClass('btn blue');
     $('.footer-act a[href*="edit_post"]').removeClass('btn blue').addClass('btn orange');
-    if (!getExclude()){
+    if (getExclude()){
         $('a[href="#reply_form"]').remove();
     }else {
         $('.reply-input:last, a[href="#reply_form"]').remove();
@@ -316,7 +316,7 @@ $(document).ready(function(){
             'visitormessage',
             'reputation'
             ];
-        for (var i = 0; i < excluded.lenght; i++){
+        for (var i = 0; i = excluded.length; i++){
             if (window.location.href.indexOf(excluded[i]) > -1){
                 return true;
                 break;
