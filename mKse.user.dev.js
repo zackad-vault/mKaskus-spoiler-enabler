@@ -4,7 +4,7 @@
 // @homepageURL    http://www.kaskus.co.id/profile/4125324
 // @description    Spoiler di m.kaskus layaknya versi desktop
 // @author         zackad
-// @version        0.3.6.12
+// @version        0.3.6.13
 // @include        http://m.kaskus.co.id/*
 // @include        http://fjb.m.kaskus.co.id/*
 // @include        /^https?://www.kaskus.co.id/thread/*/
@@ -21,10 +21,8 @@
 /*
 // @exclude        /^http://m.kaskus.co.id/(?:reputation|visitormessage|pm)/*
     LATEST UPDATE
-    v0.3.6.12
-    - getExclude function fix
-    v0.3.6.11
-    - exclude function
+    v0.3.6.13
+    - getExclude patched
 */
 $(document).ready(function(){
     /*===========================================
@@ -82,7 +80,10 @@ $(document).ready(function(){
     if (!getExclude()){
         //$('a[href="#reply_form"]').remove();
         $('.reply-input:last, a[href="#reply_form"]').remove();
-    }
+    }//else {
+        //$('.reply-input:last, a[href="#reply_form"]').remove();
+    //}
+    
     /*===========================================
       REDIRECT LINK REMOVER [thanks : AMZZZMA]
     *\===========================================*/
@@ -184,6 +185,7 @@ $(document).ready(function(){
         +'a[href$=".jpeg"],'
         +'a[href$=".GIF"],'
         +'a[href*=".jpg?"],'
+        +'a[href*="gif.latex?"],'
         +'a[href^="http://puu.sh/"]';
     var image = $(imgSelector).css({'background-color': '#333', 'color' : 'white'});
     image.each(function(){
@@ -312,11 +314,12 @@ $(document).ready(function(){
         var excluded = [
             'pm',
             'visitormessage',
-            'reputation'
+            'reputation',
+            'subscribe'
             ];
         var status = null;
         for (var i = 0; i < excluded.length; i++){
-            if (window.location.href.indexOf(excluded[i]) > -1) status = true;
+            if (window.location.href.indexOf('kaskus.co.id/' + excluded[i]) > -1) status = true;
         }
         if (status == true) return status;
         else return false;
