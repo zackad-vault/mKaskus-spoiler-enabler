@@ -4,7 +4,7 @@
 // @homepageURL    http://www.kaskus.co.id/profile/4125324
 // @description    Spoiler di m.kaskus layaknya versi desktop
 // @author         zackad
-// @version        0.3.6.13
+// @version        0.3.6.14
 // @include        http://m.kaskus.co.id/*
 // @include        http://fjb.m.kaskus.co.id/*
 // @include        /^https?://www.kaskus.co.id/thread/*/
@@ -19,10 +19,9 @@
 // @run-at         document-end
 // ==/UserScript==
 /*
-// @exclude        /^http://m.kaskus.co.id/(?:reputation|visitormessage|pm)/*
     LATEST UPDATE
-    v0.3.6.13
-    - getExclude patched
+    v0.3.6.14
+    - cleanup, typo fixing
 */
 $(document).ready(function(){
     /*===========================================
@@ -48,7 +47,7 @@ $(document).ready(function(){
     );
     //console.log(QL);
     /*===========================================
-      UPLOAD FILE
+      UPLOAD FILE [planned]
     *\===========================================*/
 /*
     var browse = '<input type="file" onchange="ajaxFileUpload();" name="forumimg" id="browse" class="browse" />';
@@ -78,11 +77,8 @@ $(document).ready(function(){
     $('.footer-act a.user-post-tool').addClass('btn blue');
     $('.footer-act a[href*="edit_post"]').removeClass('btn blue').addClass('btn orange');
     if (!getExclude()){
-        //$('a[href="#reply_form"]').remove();
         $('.reply-input:last, a[href="#reply_form"]').remove();
-    }//else {
-        //$('.reply-input:last, a[href="#reply_form"]').remove();
-    //}
+    }
     
     /*===========================================
       REDIRECT LINK REMOVER [thanks : AMZZZMA]
@@ -129,7 +125,7 @@ $(document).ready(function(){
     
     
     /*===========================================
-      SHOW QUICK LINKS
+      SHOW QUICK LINKS [draft]
     *\===========================================*/
     if (Settings.QUICK_LINKS == true) {
         var qlWrapper = '<div id="ql"></div>';
@@ -200,18 +196,18 @@ $(document).ready(function(){
             success : function(){
                 var size = xhr.getResponseHeader('Content-Length');
                 if (size > 1048576){
-                    size = size/1048576;// + ' MB';
+                    size = size/1048576;
                     size = new String(size);
-                    var charLoc = size.indexOf(".");// + Settings.DECIMAL_POINT;
+                    var charLoc = size.indexOf(".");
                     if (charLoc > -1) {
                         charLoc = parseInt(charLoc) + parseInt(Settings.DECIMAL_POINT) + 1;
                         //console.log(charLoc);
                         size = size.substr(0,charLoc) + ' MB';
                     }
                 } else if (size > 1024){
-                    size = size/1024;// + ' KB';
+                    size = size/1024;
                     size = new String(size);
-                    var charLoc = size.indexOf(".");// + Settings.DECIMAL_POINT;
+                    var charLoc = size.indexOf(".");
                     if (charLoc > -1) {
                         charLoc = parseInt(charLoc) + parseInt(Settings.DECIMAL_POINT) + 1;
                         //console.log(charLoc);
@@ -220,8 +216,7 @@ $(document).ready(function(){
                 } else {
                     size = size + ' Bytes';
                 }
-                temp.after('<span style = "font-size : 10px; color : #00f;"> ' + size + '</span>');//.css({'color' : 'blue', 'font-size' : '8px'});
-                //alert(size);
+                temp.after('<span style = "font-size : 10px; color : #00f;"> ' + size + '</span>');
             }});
         }
     });
@@ -237,7 +232,7 @@ $(document).ready(function(){
     /*======================================
         Forum Activities Link
     \*======================================*/
-        var quoted = $('#subnav span a').has('sup').last();//.text("Forum Activities");
+        var quoted = $('#subnav span a').has('sup').last();
         if (quoted.children('sup').text() > 0) {
             quoted.attr('href', '/myforum/myquotedpost');
         } else {
@@ -254,7 +249,7 @@ $(document).ready(function(){
     var hide_all = '<a class="hide-all" class="btn bnt-sm" style="margin: 0 10px;background: #ccc;color: #484848;text-decoration:none; padding:0 4px; font-size:10px: border-radius:3px;" href="javascript:void(0);" title="Hide All Spoiler Inside">Hide all</a>';
     var show_spoiler = '&nbsp&nbsp<a class="show-spoiler" class="btn btn-sm" style="background: #ccc;color: #484848;text-decoration:none; padding:0 4px; font-size:10px; border-radius:3px;" href="javascript:void(0);" title="Show Spoiler">Show</a>';
     var hide_spoiler = '<a class="hide-spoiler" class="btn bnt-sm" style="background: #ccc;color: #484848;text-decoration:none; padding:0 4px; font-size:10px: border-radius:3px;" href="javascript:void(0);" title="Hide Spoiler">Hide</a>';
-    //var toggle_link = '<a class="toggle-link" class="btn btn-sm" style="background: #F7941D;color: #FFF; position:fixed; z-index:100; top:0 font-size:15px;" href="javascript:void(0);" title="Show Link">Show Origin Link</a>';
+    
     $('#bbcode_div > i').after(show_spoiler, hide_spoiler, show_all, hide_all);
     $('.hide-spoiler').hide();
     $('.hide-all').hide();
@@ -293,7 +288,7 @@ $(document).ready(function(){
         $('.show-all').show();
     });
     /*===========================================
-      FUNCTION DECLALARION
+      FUNCTION DECLARATION
     *\===========================================*/
     function toggle_spoiler(){
         sContent.toggle();
