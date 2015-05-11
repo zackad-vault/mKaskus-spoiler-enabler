@@ -4,7 +4,7 @@
 // @homepageURL    http://www.kaskus.co.id/profile/4125324
 // @description    Spoiler di m.kaskus layaknya versi desktop
 // @author         zackad
-// @version        0.3.6.14
+// @version        0.3.6.15
 // @include        http://m.kaskus.co.id/*
 // @include        http://fjb.m.kaskus.co.id/*
 // @include        /^https?://www.kaskus.co.id/thread/*/
@@ -20,8 +20,8 @@
 // ==/UserScript==
 /*
     LATEST UPDATE
-    v0.3.6.14
-    - cleanup, typo fixing
+    v0.3.6.15
+    - getExlude fix (again)
 */
 $(document).ready(function(){
     /*===========================================
@@ -314,7 +314,7 @@ $(document).ready(function(){
             ];
         var status = null;
         for (var i = 0; i < excluded.length; i++){
-            if (window.location.href.indexOf('kaskus.co.id/' + excluded[i]) > -1) status = true;
+            if (window.location.href.indexOf('/' + excluded[i] + '/' )> -1) status = true;
         }
         if (status == true) return status;
         else return false;
