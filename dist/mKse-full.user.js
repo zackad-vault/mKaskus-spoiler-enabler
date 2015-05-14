@@ -4,7 +4,7 @@
 // @homepageURL    http://www.kaskus.co.id/profile/4125324
 // @description    Spoiler di m.kaskus layaknya versi desktop
 // @author         zackad
-// @version        0.3.6.5
+// @version        0.3.6.6
 // @include        http://m.kaskus.co.id/*
 // @include        http://fjb.m.kaskus.co.id/*
 // @include        /^https?://www.kaskus.co.id/thread/*/
@@ -45,17 +45,7 @@ $(document).ready(function(){
         $(this).attr('href',href).attr('target', '_blank');
         //console.log(href);
     });
-    
-    /*===========================================
-      ADAPTING TO QR MOBILE
-    *\===========================================*/
-    //add class qq btn blue
-    $('.footer-act a.user-post-tool').addClass('btn blue');
-    $('.footer-act a[href*="edit_post"]').removeClass('btn blue').addClass('btn orange');
-    if (!getExclude()){
-        $('.reply-input:last, a[href="#reply_form"]').remove();
-    }
-    
+        
     /*===========================================
       REDIRECT LINK REMOVER [thanks : AMZZZMA]
     *\===========================================*/
