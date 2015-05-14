@@ -4,14 +4,10 @@
 // @homepageURL    http://www.kaskus.co.id/profile/4125324
 // @description    Spoiler di m.kaskus layaknya versi desktop
 // @author         zackad
-// @version        0.3.6.15
+// @version        0.3.6.16
 // @include        http://m.kaskus.co.id/*
 // @include        http://fjb.m.kaskus.co.id/*
-// @include        /^https?://www.kaskus.co.id/thread/*/
-// @include        /^https?://www.kaskus.co.id/lastpost/*/
-// @include        /^https?://www.kaskus.co.id/post/*/
-// @include        /^https?://www.kaskus.co.id/group/discussion/*/
-// @include        /^https?://www.kaskus.co.id/show_post/*/
+// @include        /^https?://(www|fjb).kaskus.co.id/(thread|lastpost|post|show_post|group/discussion)/*/
 // @grant          GM_addStyle
 // @license        MIT License
 // @require        http://code.jquery.com/jquery-1.10.1.min.js
@@ -20,14 +16,16 @@
 // ==/UserScript==
 /*
     LATEST UPDATE
-    v0.3.6.15
-    - getExlude fix (again)
+    v0.3.6.16
+    - no need for adapting existing qr
+    - debug mode added
 */
 $(document).ready(function(){
     /*===========================================
       GLOBAL SETTINGS
     *\===========================================*/
     var Settings = {
+        __DEBUG__ : false,         //debug version
         SHOW_ORIGIN_LINK: false,   //ganti nilainya menjadi 'true' untuk menampilkan grey link
         SHOW_IMAGE_ONCLICK: true,  //false = buka image di tab baru, true = buka image langsung ditempat
         SHOW_IMAGE_SIZE: true,     //false = jangan tampilkan size gambar, true = tampilkan size gambar
@@ -69,16 +67,6 @@ $(document).ready(function(){
         $(this).attr('href',href).attr('target', '_blank');
         //console.log(href);
     });
-    
-    /*===========================================
-      ADAPTING TO QR MOBILE
-    *\===========================================*/
-    //add class qq btn blue
-    $('.footer-act a.user-post-tool').addClass('btn blue');
-    $('.footer-act a[href*="edit_post"]').removeClass('btn blue').addClass('btn orange');
-    if (!getExclude()){
-        $('.reply-input:last, a[href="#reply_form"]').remove();
-    }
     
     /*===========================================
       REDIRECT LINK REMOVER [thanks : AMZZZMA]
@@ -182,6 +170,7 @@ $(document).ready(function(){
         +'a[href$=".GIF"],'
         +'a[href*=".jpg?"],'
         +'a[href*="gif.latex?"],'
+        +'a[href*="latex.php?"],'
         +'a[href^="http://puu.sh/"]';
     var image = $(imgSelector).css({'background-color': '#333', 'color' : 'white'});
     image.each(function(){
@@ -319,7 +308,11 @@ $(document).ready(function(){
         if (status == true) return status;
         else return false;
     }
-    
+    //Snippet code by Idx
+    function clog(x){
+        if(!Settings.__DEBUG__) return;
+        console && console.log && console.log(x);
+    }
     
     /* Hotkey */
     window.addEventListener('keydown', function(e) {
