@@ -4,7 +4,7 @@
 // @homepageURL    http://www.kaskus.co.id/profile/4125324
 // @description    Spoiler di m.kaskus layaknya versi desktop
 // @author         zackad
-// @version        0.3.6.16
+// @version        0.3.6.17
 // @include        http://m.kaskus.co.id/*
 // @include        http://fjb.m.kaskus.co.id/*
 // @include        /^https?://(www|fjb).kaskus.co.id/(thread|lastpost|post|show_post|group/discussion)/*/
@@ -98,12 +98,15 @@ $(document).ready(function(){
         var list = $('#content-wrapper .post-list .list-entry');
         list.each(function(){
             var b = $(this).children('a').attr('href');
-            //console.log(b);
-            var TID = getTID(b);
-            //console.log(TID);
+            console.log(b);
+            //var TID = getTID(b);
+            var ID = new String(b);
+            var TID = ID.split("/");
+            TID = TID[2];
+            console.log(TID);
             if (TID.length > 5) {
                 var lastpage = 'http://m.kaskus.co.id/lastpost/' + TID;
-                //console.log(TID);
+                console.log(TID);
                 lastpage = '<span><a href="' + lastpage + '"> | Last Page | </a></span>';
                 $(this).children('.sub-meta')
                     .append(lastpage);
